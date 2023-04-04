@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: BinaryVault
+server:
+  port: 8080
