@@ -1,5 +1,17 @@
 spring:
   application:
     name: BinaryVault
+  datasource:
+    username: PickBas
+    password: password
+    url: jdbc:postgresql://localhost:5432/binaryvault
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
 server:
   port: 8080
