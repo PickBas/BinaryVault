@@ -14,6 +14,6 @@ public class HandlerResponseTemplate {
     private ZonedDateTime timestamp;
     private Integer status;
     private String error;
-    private String message;
+    private Object message;
     private String path;
 }

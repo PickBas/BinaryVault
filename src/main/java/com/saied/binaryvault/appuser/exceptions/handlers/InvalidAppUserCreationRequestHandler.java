@@ -19,20 +19,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class InvalidAppUserCreationRequestHandler {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleInvalidAppUserCreationRequest(MethodArgumentNotValidException e, HttpServletRequest request) {
-        StringBuilder payload = new StringBuilder();
+    public ResponseEntity<?> handleInvalidAppUserCreationRequest(
+        MethodArgumentNotValidException e,
+        HttpServletRequest request
+    ) {
+        Map<String, String> payload = new HashMap<>();
         BindingResult res = e.getBindingResult();
         List<FieldError> fieldErrors = res.getFieldErrors();
-        for (int i = 0; i < fieldErrors.size(); ++i) {
-            payload.append(fieldErrors.get(i).getField());
-            payload.append(": ");
-            payload.append(fieldErrors.get(i).getDefaultMessage());
-            if (i != fieldErrors.size() - 1) {
-                payload.append("; ");
-            } else {
-                payload.append(".");
-            }
-        }
+        fieldErrors.forEach(
+            fieldError -> payload.put(fieldError.getField(), fieldError.getDefaultMessage())
+        );
         return ResponseEntity
             .badRequest()
             .body(
@@ -40,7 +36,7 @@ public class InvalidAppUserCreationRequestHandler {
                     ZonedDateTime.now(),
                     HttpStatus.BAD_REQUEST.value(),
                     HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                    payload.toString(),
+                    payload,
                     request.getRequestURI()
                 )
             );
