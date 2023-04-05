@@ -9,7 +9,12 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity(name = "app_user")
 @Table(
@@ -19,7 +24,10 @@ import lombok.Data;
         @UniqueConstraint(name = "app_user_username", columnNames = "username")
     }
 )
-@Data
+@Builder
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AppUser {
     @Id
     @SequenceGenerator(
