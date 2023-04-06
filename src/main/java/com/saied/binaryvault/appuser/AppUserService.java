@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.saied.binaryvault.appuser.dtos.AppUserCreationRequest;
+import com.saied.binaryvault.appuser.exceptions.AppUserAlreadyExistsException;
 import com.saied.binaryvault.appuser.exceptions.AppUserNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -16,18 +17,58 @@ public class AppUserService {
 
     private final AppUserRepository appUserRepo;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public AppUser findById(Long id) {
         return appUserRepo
             .findById(id)
             .orElseThrow(
                 () -> new AppUserNotFoundException(
-                    "Could not find user with id %d".formatted(id)
+                    "Could not find user with id: %d".formatted(id)
+                )
+            );
+    }
+
+    @Transactional(readOnly = true)
+    public AppUser findByUsername(String username) {
+        return appUserRepo
+            .findByUsername(username)
+            .orElseThrow(
+                () -> new AppUserNotFoundException(
+                    "Could not find user with username: %s".formatted(username)
+                )
+            );
+    }
+
+    @Transactional(readOnly = true)
+    public AppUser findByEmail(String email) {
+        return appUserRepo
+            .findByEmail(email)
+            .orElseThrow(
+                () -> new AppUserNotFoundException(
+                    "Could not find user with email: %s".formatted(email)
                 )
             );
     }
 
     public AppUser createAppUser(AppUserCreationRequest appUserRequest) {
+        appUserRepo
+            .findByUsername(appUserRequest.getUsername())
+            .ifPresent(
+                appUser -> {
+                    throw new AppUserAlreadyExistsException(
+                        "User with username %s already exists.".formatted(appUserRequest.getUsername())
+                    );
+                }
+            );
+        appUserRepo
+            .findByEmail(appUserRequest.getEmail())
+            .ifPresent(
+                appUser -> {
+                    throw new AppUserAlreadyExistsException(
+                        "User with email %s already exists.".formatted(appUserRequest.getEmail())
+                    );
+                }
+            );
         AppUser user = AppUser
             .builder()
             .username(appUserRequest.getUsername())
@@ -40,4 +81,5 @@ public class AppUserService {
         log.info("Created AppUser with id: {}", user.getId());
         return user;
     }
+
 }

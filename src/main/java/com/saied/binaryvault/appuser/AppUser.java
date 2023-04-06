@@ -9,6 +9,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -58,5 +60,6 @@ public class AppUser {
         nullable = false,
         columnDefinition = "TEXT"
     )
+    @JsonIgnore
     private String password;
 }
