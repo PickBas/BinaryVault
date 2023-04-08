@@ -51,24 +51,18 @@ public class AppUserService {
     }
 
     public AppUser createAppUser(AppUserCreationRequest appUserRequest) {
-        appUserRepo
-            .findByUsername(appUserRequest.getUsername())
-            .ifPresent(
-                appUser -> {
-                    throw new AppUserAlreadyExistsException(
-                        "User with username %s already exists.".formatted(appUserRequest.getUsername())
-                    );
-                }
+        boolean usernameCheck = appUserRepo.selectExistsUsername(appUserRequest.getUsername());
+        boolean emailCheck = appUserRepo.selectExistsEmail(appUserRequest.getEmail());
+        if (usernameCheck) {
+            throw new AppUserAlreadyExistsException(
+                "User with provided username %s already exists".formatted(appUserRequest.getUsername())
             );
-        appUserRepo
-            .findByEmail(appUserRequest.getEmail())
-            .ifPresent(
-                appUser -> {
-                    throw new AppUserAlreadyExistsException(
-                        "User with email %s already exists.".formatted(appUserRequest.getEmail())
-                    );
-                }
+        }
+        if (emailCheck) {
+            throw new AppUserAlreadyExistsException(
+                "User with provided email %s already exists".formatted(appUserRequest.getEmail())
             );
+        }
         AppUser user = AppUser
             .builder()
             .username(appUserRequest.getUsername())
