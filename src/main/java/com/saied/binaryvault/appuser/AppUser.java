@@ -43,6 +43,7 @@ public class AppUser {
         strategy = SEQUENCE,
         generator = "appuser_id_sequence"
     )
+    @EqualsAndHashCode.Exclude
     private Long id;
     @Column(
         name = "username",
