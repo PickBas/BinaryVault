@@ -17,8 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.saied.binaryvault.appuser.dtos.AppUserCreationRequest;
-import com.saied.binaryvault.appuser.exceptions.AppUserAlreadyExistsException;
-import com.saied.binaryvault.appuser.exceptions.AppUserNotFoundException;
+import com.saied.binaryvault.exceptions.appuser.AppUserAlreadyExistsException;
+import com.saied.binaryvault.exceptions.appuser.AppUserNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class AppUserServiceTests {

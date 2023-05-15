@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.saied.binaryvault.appuser.dtos.AppUserCreationRequest;
-import com.saied.binaryvault.appuser.exceptions.AppUserAlreadyExistsException;
-import com.saied.binaryvault.appuser.exceptions.AppUserNotFoundException;
+import com.saied.binaryvault.exceptions.appuser.AppUserAlreadyExistsException;
+import com.saied.binaryvault.exceptions.appuser.AppUserNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

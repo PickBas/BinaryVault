@@ -17,3 +17,8 @@ server:
   port: 8080
   error:
     include-message: always
+cors:
+  allowed-origins: "*"
+  allowed-methods: "*"
+  allowed-headers: "*"
+  exposed-headers: "*"

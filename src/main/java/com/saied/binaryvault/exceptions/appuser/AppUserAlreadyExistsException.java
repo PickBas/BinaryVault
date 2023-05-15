@@ -1,4 +1,4 @@
-package com.saied.binaryvault.appuser.exceptions;
+package com.saied.binaryvault.exceptions.appuser;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
