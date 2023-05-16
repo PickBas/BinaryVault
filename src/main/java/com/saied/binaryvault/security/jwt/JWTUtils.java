@@ -1,6 +1,5 @@
 package com.saied.binaryvault.security.jwt;
 
-
 import static java.time.temporal.ChronoUnit.HOURS;
 
 import io.jsonwebtoken.Claims;
