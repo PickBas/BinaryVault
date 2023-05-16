@@ -3,6 +3,9 @@ package com.saied.binaryvault.auth;
 import com.saied.binaryvault.appuser.AppUser;
 import com.saied.binaryvault.appuser.dtos.AppUserDTOMapper;
 import com.saied.binaryvault.appuser.dtos.AppUserDTO;
+import com.saied.binaryvault.auth.dtos.AuthenticationRefreshResponse;
+import com.saied.binaryvault.auth.dtos.AuthenticationRequest;
+import com.saied.binaryvault.auth.dtos.AuthenticationResponse;
 import com.saied.binaryvault.security.jwt.JWTUtils;
 import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +23,6 @@ public class AuthenticationService {
     private final JWTUtils jwtUtils;
 
     public AuthenticationResponse login(AuthenticationRequest authRequest) {
-        System.out.println("HERE");
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 authRequest.username(),
@@ -34,4 +36,15 @@ public class AuthenticationService {
         return new AuthenticationResponse(accessToken, refreshToken, userDTO);
     }
 
+    public AuthenticationRefreshResponse getRefreshedTokens(String oldRefreshToken) {
+        String accessToken = jwtUtils.issueAccessToken(
+            jwtUtils.getSubject(oldRefreshToken),
+            new HashMap<>()
+        );
+        String refreshToken = jwtUtils.issueRefreshToken(
+            jwtUtils.getSubject(oldRefreshToken),
+            new HashMap<>()
+        );
+        return new AuthenticationRefreshResponse(accessToken, refreshToken);
+    }
 }

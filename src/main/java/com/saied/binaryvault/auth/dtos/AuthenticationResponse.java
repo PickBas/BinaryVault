@@ -1,4 +1,4 @@
-package com.saied.binaryvault.auth;
+package com.saied.binaryvault.auth.dtos;
 
 import com.saied.binaryvault.appuser.dtos.AppUserDTO;
 
