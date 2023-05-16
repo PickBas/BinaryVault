@@ -1,7 +1,6 @@
 package com.saied.binaryvault.appuser.dtos;
 
 import com.saied.binaryvault.appuser.AppUser;
-import com.saied.binaryvault.appuser.dtos.AppUserDTO;
 import java.util.function.Function;
 import org.springframework.stereotype.Component;
 

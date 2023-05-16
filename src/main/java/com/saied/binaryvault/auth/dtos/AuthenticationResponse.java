@@ -1,11 +1,12 @@
 package com.saied.binaryvault.auth.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.saied.binaryvault.appuser.dtos.AppUserDTO;
 
 public record AuthenticationResponse(
-    String accessToken,
-    String refreshToken,
-    AppUserDTO userDTO
+    @JsonProperty("access_token") String accessToken,
+    @JsonProperty("refresh_token") String refreshToken,
+    @JsonProperty("user_details") AppUserDTO userDTO
 ) {
 
 }
