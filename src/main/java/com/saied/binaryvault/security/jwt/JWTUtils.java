@@ -9,6 +9,7 @@ import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,14 @@ public class JWTUtils {
     private static final Integer REFRESH_TOKEN_EXPIRATION_TIME_HOURS = 168;
     private static final String SECRET = "secretsecretsecretsecretsecret0u09710928391827301927309secretsecretsecretsecretsecret0989080";
     private static final String ISSUER = "https://binaryvault.com";
+
+    public String issueAccessToken(String subject, List<String> scopes) {
+        return this.issueAccessToken(subject, Map.of("scopes", scopes));
+    }
+
+    public String issueRefreshToken(String subject, List<String> scopes) {
+        return this.issueRefreshToken(subject, Map.of("scopes", scopes));
+    }
 
     /**
      * Issuing access token

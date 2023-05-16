@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.saied.binaryvault.appuser.dtos.AppUserCreationRequest;
-import com.saied.binaryvault.exceptions.appuser.AppUserAlreadyExistsException;
-import com.saied.binaryvault.exceptions.appuser.AppUserNotFoundException;
+import com.saied.binaryvault.exceptions.ResourceAlreadyExistsException;
+import com.saied.binaryvault.exceptions.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class AppUserService {
         return appUserRepo
             .findById(id)
             .orElseThrow(
-                () -> new AppUserNotFoundException(
+                () -> new ResourceNotFoundException(
                     "Could not find user with id: %d".formatted(id)
                 )
             );
@@ -33,7 +33,7 @@ public class AppUserService {
         return appUserRepo
             .findByUsername(username)
             .orElseThrow(
-                () -> new AppUserNotFoundException(
+                () -> new ResourceNotFoundException(
                     "Could not find user with username: %s".formatted(username)
                 )
             );
@@ -44,7 +44,7 @@ public class AppUserService {
         return appUserRepo
             .findByEmail(email)
             .orElseThrow(
-                () -> new AppUserNotFoundException(
+                () -> new ResourceNotFoundException(
                     "Could not find user with email: %s".formatted(email)
                 )
             );
@@ -54,12 +54,12 @@ public class AppUserService {
         boolean usernameCheck = appUserRepo.selectExistsUsername(appUserRequest.getUsername());
         boolean emailCheck = appUserRepo.selectExistsEmail(appUserRequest.getEmail());
         if (usernameCheck) {
-            throw new AppUserAlreadyExistsException(
+            throw new ResourceAlreadyExistsException(
                 "User with provided username %s already exists".formatted(appUserRequest.getUsername())
             );
         }
         if (emailCheck) {
-            throw new AppUserAlreadyExistsException(
+            throw new ResourceAlreadyExistsException(
                 "User with provided email %s already exists".formatted(appUserRequest.getEmail())
             );
         }

@@ -1,12 +1,12 @@
-package com.saied.binaryvault.exceptions.appuser;
+package com.saied.binaryvault.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
-public class AppUserNotFoundException extends RuntimeException {
+public class ResourceNotFoundException extends RuntimeException {
 
-    public AppUserNotFoundException(String message) {
+    public ResourceNotFoundException(String message) {
         super(message);
     }
 }

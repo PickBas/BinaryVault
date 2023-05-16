@@ -1,6 +1,8 @@
 package com.saied.binaryvault.auth;
 
 import com.saied.binaryvault.appuser.AppUser;
+import com.saied.binaryvault.appuser.AppUserRepository;
+import com.saied.binaryvault.appuser.AppUserService;
 import com.saied.binaryvault.appuser.dtos.AppUserDTOMapper;
 import com.saied.binaryvault.appuser.dtos.AppUserDTO;
 import com.saied.binaryvault.auth.dtos.AuthenticationRefreshResponse;
@@ -8,6 +10,7 @@ import com.saied.binaryvault.auth.dtos.AuthenticationRequest;
 import com.saied.binaryvault.auth.dtos.AuthenticationResponse;
 import com.saied.binaryvault.security.jwt.JWTUtils;
 import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +22,8 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
-    private final AppUserDTOMapper customerDTOMapper;
+    private final AppUserDTOMapper userDTOMapper;
+    private final AppUserService userService;
     private final JWTUtils jwtUtils;
 
     public AuthenticationResponse login(AuthenticationRequest authRequest) {
@@ -30,20 +34,29 @@ public class AuthenticationService {
             )
         );
         AppUser principal = (AppUser) authentication.getPrincipal();
-        AppUserDTO userDTO = customerDTOMapper.apply(principal);
-        String accessToken = jwtUtils.issueAccessToken(userDTO.username(), new HashMap<>());
-        String refreshToken = jwtUtils.issueRefreshToken(userDTO.username(), new HashMap<>());
+        AppUserDTO userDTO = userDTOMapper.apply(principal);
+        String accessToken = jwtUtils.issueAccessToken(
+            userDTO.username(),
+            userDTO.authorities()
+        );
+        String refreshToken = jwtUtils.issueRefreshToken(
+            userDTO.username(),
+            userDTO.authorities()
+        );
         return new AuthenticationResponse(accessToken, refreshToken, userDTO);
     }
 
     public AuthenticationRefreshResponse getRefreshedTokens(String oldRefreshToken) {
+        AppUserDTO appUser = userDTOMapper.apply(
+            userService.findByUsername(jwtUtils.getSubject(oldRefreshToken))
+        );
         String accessToken = jwtUtils.issueAccessToken(
-            jwtUtils.getSubject(oldRefreshToken),
-            new HashMap<>()
+            appUser.username(),
+            appUser.authorities()
         );
         String refreshToken = jwtUtils.issueRefreshToken(
-            jwtUtils.getSubject(oldRefreshToken),
-            new HashMap<>()
+            appUser.username(),
+            appUser.authorities()
         );
         return new AuthenticationRefreshResponse(accessToken, refreshToken);
     }

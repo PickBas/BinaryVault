@@ -17,8 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.saied.binaryvault.appuser.dtos.AppUserCreationRequest;
-import com.saied.binaryvault.exceptions.appuser.AppUserAlreadyExistsException;
-import com.saied.binaryvault.exceptions.appuser.AppUserNotFoundException;
+import com.saied.binaryvault.exceptions.ResourceAlreadyExistsException;
+import com.saied.binaryvault.exceptions.ResourceNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class AppUserServiceTests {
@@ -69,21 +69,21 @@ class AppUserServiceTests {
     public void testNotFoundById() {
         Long id = 1L;
         when(appUserRepo.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(AppUserNotFoundException.class, () -> appUserService.findById(id));
+        assertThrows(ResourceNotFoundException.class, () -> appUserService.findById(id));
     }
 
     @Test
     public void testNotFoundByUsername() {
         String username = "test";
         when(appUserRepo.findByUsername(anyString())).thenReturn(Optional.empty());
-        assertThrows(AppUserNotFoundException.class, () -> appUserService.findByUsername(username));
+        assertThrows(ResourceNotFoundException.class, () -> appUserService.findByUsername(username));
     }
 
     @Test
     public void testNotFoundByEmail() {
         String email = "test@example.com";
         when(appUserRepo.findByEmail(anyString())).thenReturn(Optional.empty());
-        assertThrows(AppUserNotFoundException.class, () -> appUserService.findByEmail(email));
+        assertThrows(ResourceNotFoundException.class, () -> appUserService.findByEmail(email));
     }
 
     @Test
@@ -119,7 +119,7 @@ class AppUserServiceTests {
         existingUser.setId(1L);
         existingUser.setUsername(request.getUsername());
         when(appUserRepo.selectExistsUsername(request.getUsername())).thenReturn(true);
-        assertThrows(AppUserAlreadyExistsException.class, () -> appUserService.createAppUser(request));
+        assertThrows(ResourceAlreadyExistsException.class, () -> appUserService.createAppUser(request));
     }
 
     @Test
@@ -134,6 +134,6 @@ class AppUserServiceTests {
         existingUser.setId(1L);
         existingUser.setEmail(request.getEmail());
         when(appUserRepo.selectExistsEmail(request.getEmail())).thenReturn(true);
-        assertThrows(AppUserAlreadyExistsException.class, () -> appUserService.createAppUser(request));
+        assertThrows(ResourceAlreadyExistsException.class, () -> appUserService.createAppUser(request));
     }
 }
