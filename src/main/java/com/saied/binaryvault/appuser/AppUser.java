@@ -29,7 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
     name = "app_user",
     uniqueConstraints = {
         @UniqueConstraint(name = "appuser_email_unique", columnNames = "email"),
-        @UniqueConstraint(name = "app_user_username", columnNames = "username")
+        @UniqueConstraint(name = "appuser_username_unique", columnNames = "username")
     }
 )
 @Builder
@@ -39,31 +39,38 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppUser implements UserDetails {
+
     @Id
     @SequenceGenerator(
-        name = "appuser_id_sequence",
-        sequenceName = "appuser_id_sequence"
+        name = "app_user_id_seq",
+        sequenceName = "app_user_id_seq",
+        allocationSize = 1
     )
     @GeneratedValue(
         strategy = SEQUENCE,
-        generator = "appuser_id_sequence"
+        generator = "app_user_id_seq"
     )
     @EqualsAndHashCode.Exclude
     private Long id;
+
     @Column(
         name = "username",
         nullable = false
     )
     private String username;
+
     @Column(
         name = "email",
         nullable = false
     )
     private String email;
+
     @Column(name = "first_name")
     private String firstName;
+
     @Column(name = "last_name")
     private String lastName;
+
     @Column(
         name = "password",
         nullable = false,
