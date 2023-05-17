@@ -28,8 +28,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(
     name = "app_user",
     uniqueConstraints = {
-        @UniqueConstraint(name = "appuser_email_unique", columnNames = "email"),
-        @UniqueConstraint(name = "appuser_username_unique", columnNames = "username")
+        @UniqueConstraint(name = "app_user_email_unique", columnNames = "email"),
+        @UniqueConstraint(name = "app_user_username_unique", columnNames = "username")
     }
 )
 @Builder
