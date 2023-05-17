@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import com.saied.binaryvault.appuser.AppUser;
 import com.saied.binaryvault.appuser.AppUserRepository;
 import com.saied.binaryvault.appuser.AppUserService;
+import com.saied.binaryvault.auth.dtos.RegistrationRequest;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -97,7 +98,7 @@ class AppUserServiceTests {
 
     @Test
     public void testCreateAppUserSuccess() {
-        AppUserCreationRequest request = new AppUserCreationRequest();
+        RegistrationRequest request = new RegistrationRequest();
         request.setUsername("testuser");
         request.setEmail("test@example.com");
         request.setFirstName("Test");
@@ -105,7 +106,8 @@ class AppUserServiceTests {
         request.setPassword("password");
         when(appUserRepo.selectExistsUsername(request.getUsername())).thenReturn(false);
         when(appUserRepo.selectExistsEmail(request.getEmail())).thenReturn(false);
-        when(passwordEncoder.encode(request.getPassword())).thenReturn(new BCryptPasswordEncoder().encode(request.getPassword()));
+        when(passwordEncoder.encode(request.getPassword()))
+            .thenReturn(new BCryptPasswordEncoder().encode(request.getPassword()));
         ArgumentCaptor<AppUser> userArgumentCaptor = ArgumentCaptor.forClass(AppUser.class);
         appUserService.createAppUser(request);
         verify(appUserRepo).saveAndFlush(userArgumentCaptor.capture());
@@ -118,7 +120,7 @@ class AppUserServiceTests {
 
     @Test
     public void testCreateAppUserUsernameExists() {
-        AppUserCreationRequest request = new AppUserCreationRequest();
+        RegistrationRequest request = new RegistrationRequest();
         request.setUsername("testuser");
         request.setEmail("test@example.com");
         request.setFirstName("Test");
@@ -133,7 +135,7 @@ class AppUserServiceTests {
 
     @Test
     public void testCreateAppUserEmailExists() {
-        AppUserCreationRequest request = new AppUserCreationRequest();
+        RegistrationRequest request = new RegistrationRequest();
         request.setUsername("testuser");
         request.setEmail("test@example.com");
         request.setFirstName("Test");

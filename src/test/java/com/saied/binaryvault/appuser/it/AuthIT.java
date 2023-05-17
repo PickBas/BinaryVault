@@ -7,6 +7,7 @@ import com.saied.binaryvault.appuser.dtos.AppUserDTO;
 import com.saied.binaryvault.auth.dtos.AuthenticationRefreshResponse;
 import com.saied.binaryvault.auth.dtos.AuthenticationRequest;
 import com.saied.binaryvault.auth.dtos.AuthenticationResponse;
+import com.saied.binaryvault.auth.dtos.RegistrationRequest;
 import com.saied.binaryvault.security.jwt.JWTUtils;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -34,11 +35,7 @@ public class AuthIT {
     @Autowired
     private JWTUtils jwtUtils;
 
-    @Autowired
-    private PasswordEncoder encoder;
-
     private static final String AUTH_PATH = "/api/v1/auth";
-    private static final String USER_CREATION_PATH = "/api/v1/user/create";
 
     private AppUserDTO generateFakeUser() {
         Faker faker = new Faker();
@@ -61,20 +58,20 @@ public class AuthIT {
     public void testLogin() {
         AppUserDTO userDTO = generateFakeUser();
         String password = "test123!";
-        AppUserCreationRequest userCreationRequest = new AppUserCreationRequest(
+        AuthenticationRequest authRequest = new AuthenticationRequest(userDTO.username(), password);
+        AuthenticationRequest authRequestBadCredentials = new AuthenticationRequest(userDTO.username(), "INVALID");
+        RegistrationRequest registrationRequest = new RegistrationRequest(
             userDTO.username(),
             userDTO.email(),
             userDTO.firstName(),
             userDTO.lastName(),
             password
         );
-        AuthenticationRequest authRequest = new AuthenticationRequest(userDTO.username(), password);
-        AuthenticationRequest authRequestBadCredentials = new AuthenticationRequest(userDTO.username(), "INVALID");
         webTestClient.post()
-            .uri(USER_CREATION_PATH)
+            .uri(AUTH_PATH + "/register")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(userCreationRequest), AppUserCreationRequest.class)
+            .body(Mono.just(registrationRequest), AppUserCreationRequest.class)
             .exchange()
             .expectStatus()
             .isCreated();
@@ -100,19 +97,19 @@ public class AuthIT {
     public void testJwtToken() {
         AppUserDTO userDTO = generateFakeUser();
         String password = "test123!";
-        AppUserCreationRequest userCreationRequest = new AppUserCreationRequest(
+        AuthenticationRequest authRequest = new AuthenticationRequest(userDTO.username(), password);
+        RegistrationRequest registrationRequest = new RegistrationRequest(
             userDTO.username(),
             userDTO.email(),
             userDTO.firstName(),
             userDTO.lastName(),
             password
         );
-        AuthenticationRequest authRequest = new AuthenticationRequest(userDTO.username(), password);
         webTestClient.post()
-            .uri(USER_CREATION_PATH)
+            .uri(AUTH_PATH + "/register")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(userCreationRequest), AppUserCreationRequest.class)
+            .body(Mono.just(registrationRequest), AppUserCreationRequest.class)
             .exchange()
             .expectStatus()
             .isCreated();
@@ -142,7 +139,7 @@ public class AuthIT {
     public void testRefreshToken() {
         AppUserDTO userDTO = generateFakeUser();
         String password = "test123!";
-        AppUserCreationRequest userCreationRequest = new AppUserCreationRequest(
+        RegistrationRequest registrationRequest = new RegistrationRequest(
             userDTO.username(),
             userDTO.email(),
             userDTO.firstName(),
@@ -150,10 +147,10 @@ public class AuthIT {
             password
         );
         webTestClient.post()
-            .uri(USER_CREATION_PATH)
+            .uri(AUTH_PATH + "/register")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(userCreationRequest), AppUserCreationRequest.class)
+            .body(Mono.just(registrationRequest), AppUserCreationRequest.class)
             .exchange()
             .expectStatus()
             .isCreated();
@@ -185,6 +182,35 @@ public class AuthIT {
         String subject = jwtUtils.getSubject(newAccessToken);
         Assertions.assertTrue(jwtUtils.isTokenValid(newAccessToken, subject));
         Assertions.assertTrue(jwtUtils.isTokenValid(newRefreshToken, subject));
+    }
+
+    @Test
+    public void testRegistration() {
+        AppUserDTO userDTO = generateFakeUser();
+        String password = "test_password123!";
+        RegistrationRequest request = new RegistrationRequest(
+            userDTO.username(),
+            userDTO.email(),
+            userDTO.firstName(),
+            userDTO.lastName(),
+            password
+        );
+        EntityExchangeResult<AppUserDTO> resultRefreshToken = webTestClient.post()
+            .uri(AUTH_PATH + "/register")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(Mono.just(request), RegistrationRequest.class)
+            .exchange()
+            .expectStatus()
+            .isCreated()
+            .expectBody(new ParameterizedTypeReference<AppUserDTO>() {})
+            .returnResult();
+        AppUserDTO registeredUser = resultRefreshToken.getResponseBody();
+        Assertions.assertNotNull(registeredUser);
+        Assertions.assertEquals(userDTO.username(), registeredUser.username());
+        Assertions.assertEquals(userDTO.email(), registeredUser.email());
+        Assertions.assertEquals(userDTO.firstName(), registeredUser.firstName());
+        Assertions.assertEquals(userDTO.lastName(), registeredUser.lastName());
     }
 
 }

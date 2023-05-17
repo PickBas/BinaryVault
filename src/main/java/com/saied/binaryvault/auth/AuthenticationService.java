@@ -8,6 +8,7 @@ import com.saied.binaryvault.appuser.dtos.AppUserDTO;
 import com.saied.binaryvault.auth.dtos.AuthenticationRefreshResponse;
 import com.saied.binaryvault.auth.dtos.AuthenticationRequest;
 import com.saied.binaryvault.auth.dtos.AuthenticationResponse;
+import com.saied.binaryvault.auth.dtos.RegistrationRequest;
 import com.saied.binaryvault.security.jwt.JWTUtils;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,17 +48,21 @@ public class AuthenticationService {
     }
 
     public AuthenticationRefreshResponse getRefreshedTokens(String oldRefreshToken) {
-        AppUserDTO appUser = userDTOMapper.apply(
+        AppUserDTO userDTO = userDTOMapper.apply(
             userService.findByUsername(jwtUtils.getSubject(oldRefreshToken))
         );
         String accessToken = jwtUtils.issueAccessToken(
-            appUser.username(),
-            appUser.authorities()
+            userDTO.username(),
+            userDTO.authorities()
         );
         String refreshToken = jwtUtils.issueRefreshToken(
-            appUser.username(),
-            appUser.authorities()
+            userDTO.username(),
+            userDTO.authorities()
         );
         return new AuthenticationRefreshResponse(accessToken, refreshToken);
+    }
+
+    public AppUserDTO register(RegistrationRequest request) {
+        return userDTOMapper.apply(userService.createAppUser(request));
     }
 }

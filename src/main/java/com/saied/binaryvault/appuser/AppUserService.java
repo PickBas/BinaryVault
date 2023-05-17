@@ -1,10 +1,10 @@
 package com.saied.binaryvault.appuser;
 
+import com.saied.binaryvault.auth.dtos.RegistrationRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.saied.binaryvault.appuser.dtos.AppUserCreationRequest;
 import com.saied.binaryvault.exceptions.ResourceAlreadyExistsException;
 import com.saied.binaryvault.exceptions.ResourceNotFoundException;
 
@@ -52,7 +52,7 @@ public class AppUserService {
             );
     }
 
-    public AppUser createAppUser(AppUserCreationRequest appUserRequest) {
+    public AppUser createAppUser(RegistrationRequest appUserRequest) {
         boolean usernameCheck = appUserRepo.selectExistsUsername(appUserRequest.getUsername());
         boolean emailCheck = appUserRepo.selectExistsEmail(appUserRequest.getEmail());
         if (usernameCheck) {
