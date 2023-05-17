@@ -1,5 +1,6 @@
 package com.saied.binaryvault.appuser;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AppUserService {
 
     private final AppUserRepository appUserRepo;
+    private final PasswordEncoder encoder;
 
     @Transactional(readOnly = true)
     public AppUser findById(Long id) {
@@ -69,7 +71,7 @@ public class AppUserService {
             .email(appUserRequest.getEmail())
             .firstName(appUserRequest.getFirstName())
             .lastName(appUserRequest.getLastName())
-            .password(appUserRequest.getPassword())
+            .password(encoder.encode(appUserRequest.getPassword()))
             .build();
         appUserRepo.saveAndFlush(user);
         log.info("Created AppUser with id: {}", user.getId());

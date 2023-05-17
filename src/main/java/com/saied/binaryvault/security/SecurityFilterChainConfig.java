@@ -37,13 +37,13 @@ public class SecurityFilterChainConfig {
          http
              .csrf().disable()
              .cors(Customizer.withDefaults())
-             .httpBasic().disable()
              .authorizeHttpRequests(
                 auth -> auth
                     .requestMatchers(
                         HttpMethod.POST,
                         "/api/v1/auth/login",
-                        "/api/v1/auth/register"
+                        "/api/v1/auth/register",
+                        "/api/v1/user/create"
                     )
                     .permitAll()
                     .anyRequest()

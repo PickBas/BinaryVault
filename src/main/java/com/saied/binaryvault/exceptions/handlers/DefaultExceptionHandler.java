@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -37,7 +38,23 @@ public class DefaultExceptionHandler {
             );
     }
 
-
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentialsException(
+        BadCredentialsException e,
+        HttpServletRequest request
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(
+                new HandlerResponseTemplate(
+                    ZonedDateTime.now(),
+                    HttpStatus.BAD_REQUEST.value(),
+                    HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                    e.getMessage(),
+                    request.getRequestURI()
+                )
+            );
+    }
 
     @ExceptionHandler(InsufficientAuthenticationException.class)
     public ResponseEntity<?> handleInsufficientAuthenticationException(

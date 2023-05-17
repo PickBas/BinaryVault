@@ -22,17 +22,23 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.saied.binaryvault.appuser.dtos.AppUserCreationRequest;
 import com.saied.binaryvault.exceptions.ResourceAlreadyExistsException;
 import com.saied.binaryvault.exceptions.ResourceNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class AppUserServiceTests {
 
     @Mock
     private AppUserRepository appUserRepo;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private AppUserService appUserService;
 
     @BeforeEach
     public void setUp() {
-        appUserService = new AppUserService(appUserRepo);
+        appUserService = new AppUserService(appUserRepo, passwordEncoder);
     }
 
     @Test
@@ -99,6 +105,7 @@ class AppUserServiceTests {
         request.setPassword("password");
         when(appUserRepo.selectExistsUsername(request.getUsername())).thenReturn(false);
         when(appUserRepo.selectExistsEmail(request.getEmail())).thenReturn(false);
+        when(passwordEncoder.encode(request.getPassword())).thenReturn(new BCryptPasswordEncoder().encode(request.getPassword()));
         ArgumentCaptor<AppUser> userArgumentCaptor = ArgumentCaptor.forClass(AppUser.class);
         appUserService.createAppUser(request);
         verify(appUserRepo).saveAndFlush(userArgumentCaptor.capture());
@@ -107,7 +114,6 @@ class AppUserServiceTests {
         assertEquals(request.getEmail(), createdAppUser.getEmail());
         assertEquals(request.getFirstName(), createdAppUser.getFirstName());
         assertEquals(request.getLastName(), createdAppUser.getLastName());
-        assertEquals(request.getPassword(), createdAppUser.getPassword());
     }
 
     @Test
