@@ -1,8 +1,6 @@
 package com.saied.binaryvault.exceptions.handlers;
 
-import com.saied.binaryvault.exceptions.InvalidJWTException;
 import com.saied.binaryvault.exceptions.ResourceNotFoundException;
-import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -18,7 +16,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 @ControllerAdvice
 public class DefaultExceptionHandler {
@@ -44,24 +41,6 @@ public class DefaultExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleBadCredentialsException(
         BadCredentialsException e,
-        HttpServletRequest request
-    ) {
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(
-                new HandlerResponseTemplate(
-                    ZonedDateTime.now(),
-                    HttpStatus.BAD_REQUEST.value(),
-                    HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                    e.getMessage(),
-                    request.getRequestURI()
-                )
-            );
-    }
-
-    @ExceptionHandler(InvalidJWTException.class)
-    public ResponseEntity<?> handleInvalidJWTException(
-        InvalidJWTException e,
         HttpServletRequest request
     ) {
         return ResponseEntity

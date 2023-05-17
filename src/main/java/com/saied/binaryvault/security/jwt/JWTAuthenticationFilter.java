@@ -1,7 +1,5 @@
 package com.saied.binaryvault.security.jwt;
 
-import com.saied.binaryvault.exceptions.InvalidJWTException;
-import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
