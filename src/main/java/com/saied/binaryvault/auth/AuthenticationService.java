@@ -33,7 +33,6 @@ public class AuthenticationService {
                 authRequest.password()
             )
         );
-        System.out.println("HERE");
         AppUser principal = (AppUser) authentication.getPrincipal();
         AppUserDTO userDTO = userDTOMapper.apply(principal);
         String accessToken = jwtUtils.issueAccessToken(

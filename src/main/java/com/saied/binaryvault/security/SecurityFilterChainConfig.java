@@ -25,7 +25,7 @@ public class SecurityFilterChainConfig {
     public SecurityFilterChainConfig(
         AuthenticationProvider authenticationProvider,
         JWTAuthenticationFilter jwtAuthenticationFilter,
-        AuthenticationEntryPoint authenticationEntryPoint
+        @Qualifier("delegatingAuthEntryPoint") AuthenticationEntryPoint authenticationEntryPoint
     ) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;

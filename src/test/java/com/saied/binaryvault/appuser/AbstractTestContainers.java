@@ -12,10 +12,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public abstract class AbstractTestContainers {
 
     @Container
-    public static final PostgreSQLContainer<?> psqlContainer = new PostgreSQLContainer<>("postgres:latest")
-        .withDatabaseName("binaryvault")
-        .withUsername("pickbas")
-        .withPassword("password");
+    public static final PostgreSQLContainer<?> psqlContainer =
+        new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("binaryvault")
+            .withUsername("pickbas")
+            .withPassword("password");
 
     @BeforeAll
     static void beforeAll() {

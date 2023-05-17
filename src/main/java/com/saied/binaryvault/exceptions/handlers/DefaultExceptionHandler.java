@@ -1,6 +1,8 @@
 package com.saied.binaryvault.exceptions.handlers;
 
+import com.saied.binaryvault.exceptions.InvalidJWTException;
 import com.saied.binaryvault.exceptions.ResourceNotFoundException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,6 +44,42 @@ public class DefaultExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleBadCredentialsException(
         BadCredentialsException e,
+        HttpServletRequest request
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(
+                new HandlerResponseTemplate(
+                    ZonedDateTime.now(),
+                    HttpStatus.BAD_REQUEST.value(),
+                    HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                    e.getMessage(),
+                    request.getRequestURI()
+                )
+            );
+    }
+
+    @ExceptionHandler(InvalidJWTException.class)
+    public ResponseEntity<?> handleInvalidJWTException(
+        InvalidJWTException e,
+        HttpServletRequest request
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(
+                new HandlerResponseTemplate(
+                    ZonedDateTime.now(),
+                    HttpStatus.BAD_REQUEST.value(),
+                    HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                    e.getMessage(),
+                    request.getRequestURI()
+                )
+            );
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<?> handleUsernameNotFoundException(
+        UsernameNotFoundException e,
         HttpServletRequest request
     ) {
         return ResponseEntity
