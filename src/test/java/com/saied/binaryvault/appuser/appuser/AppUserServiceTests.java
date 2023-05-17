@@ -20,7 +20,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.saied.binaryvault.appuser.dtos.AppUserCreationRequest;
 import com.saied.binaryvault.exceptions.ResourceAlreadyExistsException;
 import com.saied.binaryvault.exceptions.ResourceNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

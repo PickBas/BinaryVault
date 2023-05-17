@@ -2,7 +2,6 @@ package com.saied.binaryvault.appuser.it;
 
 import com.github.javafaker.Faker;
 import com.github.javafaker.Name;
-import com.saied.binaryvault.appuser.dtos.AppUserCreationRequest;
 import com.saied.binaryvault.appuser.dtos.AppUserDTO;
 import com.saied.binaryvault.auth.dtos.AuthenticationRefreshResponse;
 import com.saied.binaryvault.auth.dtos.AuthenticationRequest;
@@ -71,7 +70,7 @@ public class AuthIT {
             .uri(AUTH_PATH + "/register")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(registrationRequest), AppUserCreationRequest.class)
+            .body(Mono.just(registrationRequest), RegistrationRequest.class)
             .exchange()
             .expectStatus()
             .isCreated();
@@ -109,7 +108,7 @@ public class AuthIT {
             .uri(AUTH_PATH + "/register")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(registrationRequest), AppUserCreationRequest.class)
+            .body(Mono.just(registrationRequest), RegistrationRequest.class)
             .exchange()
             .expectStatus()
             .isCreated();
@@ -150,7 +149,7 @@ public class AuthIT {
             .uri(AUTH_PATH + "/register")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(registrationRequest), AppUserCreationRequest.class)
+            .body(Mono.just(registrationRequest), RegistrationRequest.class)
             .exchange()
             .expectStatus()
             .isCreated();
