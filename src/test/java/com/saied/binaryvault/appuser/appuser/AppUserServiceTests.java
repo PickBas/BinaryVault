@@ -1,4 +1,4 @@
-package com.saied.binaryvault.appuser;
+package com.saied.binaryvault.appuser.appuser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -7,6 +7,9 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.saied.binaryvault.appuser.AppUser;
+import com.saied.binaryvault.appuser.AppUserRepository;
+import com.saied.binaryvault.appuser.AppUserService;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
