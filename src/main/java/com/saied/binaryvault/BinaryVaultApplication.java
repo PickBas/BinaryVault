@@ -10,4 +10,18 @@ public class BinaryVaultApplication {
         SpringApplication.run(BinaryVaultApplication.class, args);
     }
 
+//    @Bean
+//    CommandLineRunner commandLineRunner(AppUserService appUserService) {
+//        return args -> {
+//            appUserService.createAppUser(
+//                new AppUserCreationRequest(
+//                    "PickBas",
+//                    "asd@asd.asd",
+//                    "Kirill",
+//                    "Saied",
+//                    "asdf123!"
+//                )
+//            );
+//        };
+//    }
 }

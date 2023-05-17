@@ -1,11 +1,12 @@
 package com.saied.binaryvault.appuser;
 
+import com.saied.binaryvault.auth.dtos.RegistrationRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.saied.binaryvault.appuser.dtos.AppUserCreationRequest;
-import com.saied.binaryvault.appuser.exceptions.AppUserAlreadyExistsException;
-import com.saied.binaryvault.appuser.exceptions.AppUserNotFoundException;
+import com.saied.binaryvault.exceptions.ResourceAlreadyExistsException;
+import com.saied.binaryvault.exceptions.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,13 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 public class AppUserService {
 
     private final AppUserRepository appUserRepo;
+    private final PasswordEncoder encoder;
 
     @Transactional(readOnly = true)
     public AppUser findById(Long id) {
         return appUserRepo
             .findById(id)
             .orElseThrow(
-                () -> new AppUserNotFoundException(
+                () -> new ResourceNotFoundException(
                     "Could not find user with id: %d".formatted(id)
                 )
             );
@@ -33,7 +35,7 @@ public class AppUserService {
         return appUserRepo
             .findByUsername(username)
             .orElseThrow(
-                () -> new AppUserNotFoundException(
+                () -> new ResourceNotFoundException(
                     "Could not find user with username: %s".formatted(username)
                 )
             );
@@ -44,22 +46,22 @@ public class AppUserService {
         return appUserRepo
             .findByEmail(email)
             .orElseThrow(
-                () -> new AppUserNotFoundException(
+                () -> new ResourceNotFoundException(
                     "Could not find user with email: %s".formatted(email)
                 )
             );
     }
 
-    public AppUser createAppUser(AppUserCreationRequest appUserRequest) {
+    public AppUser createAppUser(RegistrationRequest appUserRequest) {
         boolean usernameCheck = appUserRepo.selectExistsUsername(appUserRequest.getUsername());
         boolean emailCheck = appUserRepo.selectExistsEmail(appUserRequest.getEmail());
         if (usernameCheck) {
-            throw new AppUserAlreadyExistsException(
+            throw new ResourceAlreadyExistsException(
                 "User with provided username %s already exists".formatted(appUserRequest.getUsername())
             );
         }
         if (emailCheck) {
-            throw new AppUserAlreadyExistsException(
+            throw new ResourceAlreadyExistsException(
                 "User with provided email %s already exists".formatted(appUserRequest.getEmail())
             );
         }
@@ -69,7 +71,7 @@ public class AppUserService {
             .email(appUserRequest.getEmail())
             .firstName(appUserRequest.getFirstName())
             .lastName(appUserRequest.getLastName())
-            .password(appUserRequest.getPassword())
+            .password(encoder.encode(appUserRequest.getPassword()))
             .build();
         appUserRepo.saveAndFlush(user);
         log.info("Created AppUser with id: {}", user.getId());

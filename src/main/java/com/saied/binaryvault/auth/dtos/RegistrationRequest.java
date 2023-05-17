@@ -1,12 +1,15 @@
-package com.saied.binaryvault.appuser.dtos;
+package com.saied.binaryvault.auth.dtos;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class AppUserCreationRequest {
+public class RegistrationRequest {
     @NotBlank
     private String username;
     @Email

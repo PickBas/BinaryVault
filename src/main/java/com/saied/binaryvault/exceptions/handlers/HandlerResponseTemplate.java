@@ -1,4 +1,4 @@
-package com.saied.binaryvault.appuser.exceptions.handlers;
+package com.saied.binaryvault.exceptions.handlers;
 
 import java.time.ZonedDateTime;
 

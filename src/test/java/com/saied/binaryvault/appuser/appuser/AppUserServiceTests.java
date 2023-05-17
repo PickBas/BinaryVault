@@ -1,4 +1,4 @@
-package com.saied.binaryvault.appuser;
+package com.saied.binaryvault.appuser.appuser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -7,6 +7,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.saied.binaryvault.appuser.AppUser;
+import com.saied.binaryvault.appuser.AppUserRepository;
+import com.saied.binaryvault.appuser.AppUserService;
+import com.saied.binaryvault.auth.dtos.RegistrationRequest;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,20 +20,25 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.saied.binaryvault.appuser.dtos.AppUserCreationRequest;
-import com.saied.binaryvault.appuser.exceptions.AppUserAlreadyExistsException;
-import com.saied.binaryvault.appuser.exceptions.AppUserNotFoundException;
+import com.saied.binaryvault.exceptions.ResourceAlreadyExistsException;
+import com.saied.binaryvault.exceptions.ResourceNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class AppUserServiceTests {
 
     @Mock
     private AppUserRepository appUserRepo;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private AppUserService appUserService;
 
     @BeforeEach
     public void setUp() {
-        appUserService = new AppUserService(appUserRepo);
+        appUserService = new AppUserService(appUserRepo, passwordEncoder);
     }
 
     @Test
@@ -69,26 +78,26 @@ class AppUserServiceTests {
     public void testNotFoundById() {
         Long id = 1L;
         when(appUserRepo.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(AppUserNotFoundException.class, () -> appUserService.findById(id));
+        assertThrows(ResourceNotFoundException.class, () -> appUserService.findById(id));
     }
 
     @Test
     public void testNotFoundByUsername() {
         String username = "test";
         when(appUserRepo.findByUsername(anyString())).thenReturn(Optional.empty());
-        assertThrows(AppUserNotFoundException.class, () -> appUserService.findByUsername(username));
+        assertThrows(ResourceNotFoundException.class, () -> appUserService.findByUsername(username));
     }
 
     @Test
     public void testNotFoundByEmail() {
         String email = "test@example.com";
         when(appUserRepo.findByEmail(anyString())).thenReturn(Optional.empty());
-        assertThrows(AppUserNotFoundException.class, () -> appUserService.findByEmail(email));
+        assertThrows(ResourceNotFoundException.class, () -> appUserService.findByEmail(email));
     }
 
     @Test
     public void testCreateAppUserSuccess() {
-        AppUserCreationRequest request = new AppUserCreationRequest();
+        RegistrationRequest request = new RegistrationRequest();
         request.setUsername("testuser");
         request.setEmail("test@example.com");
         request.setFirstName("Test");
@@ -96,6 +105,8 @@ class AppUserServiceTests {
         request.setPassword("password");
         when(appUserRepo.selectExistsUsername(request.getUsername())).thenReturn(false);
         when(appUserRepo.selectExistsEmail(request.getEmail())).thenReturn(false);
+        when(passwordEncoder.encode(request.getPassword()))
+            .thenReturn(new BCryptPasswordEncoder().encode(request.getPassword()));
         ArgumentCaptor<AppUser> userArgumentCaptor = ArgumentCaptor.forClass(AppUser.class);
         appUserService.createAppUser(request);
         verify(appUserRepo).saveAndFlush(userArgumentCaptor.capture());
@@ -104,12 +115,11 @@ class AppUserServiceTests {
         assertEquals(request.getEmail(), createdAppUser.getEmail());
         assertEquals(request.getFirstName(), createdAppUser.getFirstName());
         assertEquals(request.getLastName(), createdAppUser.getLastName());
-        assertEquals(request.getPassword(), createdAppUser.getPassword());
     }
 
     @Test
     public void testCreateAppUserUsernameExists() {
-        AppUserCreationRequest request = new AppUserCreationRequest();
+        RegistrationRequest request = new RegistrationRequest();
         request.setUsername("testuser");
         request.setEmail("test@example.com");
         request.setFirstName("Test");
@@ -119,12 +129,12 @@ class AppUserServiceTests {
         existingUser.setId(1L);
         existingUser.setUsername(request.getUsername());
         when(appUserRepo.selectExistsUsername(request.getUsername())).thenReturn(true);
-        assertThrows(AppUserAlreadyExistsException.class, () -> appUserService.createAppUser(request));
+        assertThrows(ResourceAlreadyExistsException.class, () -> appUserService.createAppUser(request));
     }
 
     @Test
     public void testCreateAppUserEmailExists() {
-        AppUserCreationRequest request = new AppUserCreationRequest();
+        RegistrationRequest request = new RegistrationRequest();
         request.setUsername("testuser");
         request.setEmail("test@example.com");
         request.setFirstName("Test");
@@ -134,6 +144,6 @@ class AppUserServiceTests {
         existingUser.setId(1L);
         existingUser.setEmail(request.getEmail());
         when(appUserRepo.selectExistsEmail(request.getEmail())).thenReturn(true);
-        assertThrows(AppUserAlreadyExistsException.class, () -> appUserService.createAppUser(request));
+        assertThrows(ResourceAlreadyExistsException.class, () -> appUserService.createAppUser(request));
     }
 }
