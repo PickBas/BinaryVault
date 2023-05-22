@@ -53,11 +53,11 @@ public class SecurityFilterChainConfig {
              .sessionManagement(
                  session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
              )
-             .authenticationProvider(authenticationProvider)
              .addFilterBefore(
                  jwtAuthenticationFilter,
                  UsernamePasswordAuthenticationFilter.class
              )
+             .authenticationProvider(authenticationProvider)
              .exceptionHandling(
                  exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint)
              );

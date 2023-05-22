@@ -86,7 +86,7 @@ public class DefaultExceptionHandler {
                     ZonedDateTime.now(),
                     HttpStatus.FORBIDDEN.value(),
                     HttpStatus.FORBIDDEN.getReasonPhrase(),
-                    e.getMessage(),
+                    "Unauthorized action. Please check your token, Http method and uri.",
                     request.getRequestURI()
                 )
             );
