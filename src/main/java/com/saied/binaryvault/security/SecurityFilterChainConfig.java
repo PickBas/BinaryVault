@@ -36,6 +36,7 @@ public class SecurityFilterChainConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
          http
+             .httpBasic(AbstractHttpConfigurer::disable)
              .csrf(AbstractHttpConfigurer::disable)
              .cors(Customizer.withDefaults())
              .authorizeHttpRequests(
@@ -57,8 +58,9 @@ public class SecurityFilterChainConfig {
                  jwtAuthenticationFilter,
                  UsernamePasswordAuthenticationFilter.class
              )
-             .exceptionHandling()
-             .authenticationEntryPoint(authenticationEntryPoint);
+             .exceptionHandling(
+                 exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint)
+             );
          return http.build();
     }
 
