@@ -22,3 +22,8 @@ cors:
   allowed-methods: "*"
   allowed-headers: "*"
   exposed-headers: "*"
+aws:
+  region: eu-west-3
+  s3:
+    buckets:
+      fileStorage: binary-vault-blob-bucket
