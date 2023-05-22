@@ -65,8 +65,7 @@ public class AppUserService {
                 "User with provided email %s already exists".formatted(appUserRequest.getEmail())
             );
         }
-        AppUser user = AppUser
-            .builder()
+        AppUser user = AppUser.builder()
             .username(appUserRequest.getUsername())
             .email(appUserRequest.getEmail())
             .firstName(appUserRequest.getFirstName())
@@ -74,8 +73,11 @@ public class AppUserService {
             .password(encoder.encode(appUserRequest.getPassword()))
             .build();
         appUserRepo.saveAndFlush(user);
-        log.info("Created AppUser with id: {}", user.getId());
         return user;
+    }
+
+    public void saveAppUser(AppUser user) {
+        appUserRepo.save(user);
     }
 
 }

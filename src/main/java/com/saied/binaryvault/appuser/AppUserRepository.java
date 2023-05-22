@@ -9,8 +9,10 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     @Query("SELECT user FROM app_user user WHERE user.username = ?1")
     Optional<AppUser> findByUsername(String username);
+
     @Query("SELECT user FROM app_user user WHERE user.email = ?1")
     Optional<AppUser> findByEmail(String email);
+
     @Query(
         """
         SELECT
@@ -22,6 +24,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
         """
     )
     Boolean selectExistsEmail(String email);
+
     @Query(
         """
         SELECT

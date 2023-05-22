@@ -9,6 +9,8 @@ import com.saied.binaryvault.appuser.AbstractTestContainers;
 import com.saied.binaryvault.appuser.AppUser;
 import com.saied.binaryvault.appuser.AppUserRepository;
 import com.saied.binaryvault.appuser.TestConfig;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -39,12 +41,19 @@ class AppUserRepositoryTests extends AbstractTestContainers {
             "test@email.com",
             "testFirst",
             "testLast",
-            "password"
+            "password",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            new ArrayList<>()
         );
         userRepository.save(expected);
         Optional<AppUser> result = userRepository.findByUsername("test");
         assertTrue(result.isPresent());
-        assertEquals(expected, result.get());
+        AppUser resultUser = result.get();
+        assertEquals(expected.getUsername(), resultUser.getUsername());
+        assertEquals(expected.getEmail(), resultUser.getEmail());
+        assertEquals(expected.getFirstName(), resultUser.getFirstName());
+        assertEquals(expected.getLastName(), resultUser.getLastName());
     }
 
     @Test
@@ -55,12 +64,19 @@ class AppUserRepositoryTests extends AbstractTestContainers {
             "test@email.com",
             "testFirst",
             "testLast",
-            "password"
+            "password",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            new ArrayList<>()
         );
         userRepository.save(expected);
         Optional<AppUser> result = userRepository.findByEmail("test@email.com");
         assertTrue(result.isPresent());
-        assertEquals(expected, result.get());
+        AppUser resultUser = result.get();
+        assertEquals(expected.getUsername(), resultUser.getUsername());
+        assertEquals(expected.getEmail(), resultUser.getEmail());
+        assertEquals(expected.getFirstName(), resultUser.getFirstName());
+        assertEquals(expected.getLastName(), resultUser.getLastName());
     }
 
     @Test
@@ -73,7 +89,10 @@ class AppUserRepositoryTests extends AbstractTestContainers {
             "test@email.com",
             "testFirst",
             "testLast",
-            "password"
+            "password",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            new ArrayList<>()
         );
         userRepository.save(user);
         result = userRepository.selectExistsUsername("test");
@@ -90,7 +109,10 @@ class AppUserRepositoryTests extends AbstractTestContainers {
             "test@email.com",
             "testFirst",
             "testLast",
-            "password"
+            "password",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            new ArrayList<>()
         );
         userRepository.save(user);
         result = userRepository.selectExistsEmail("test@email.com");
