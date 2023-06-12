@@ -2,6 +2,7 @@ package com.saied.binaryvault.file;
 
 import com.saied.binaryvault.appuser.AppUser;
 import com.saied.binaryvault.appuser.AppUserService;
+import com.saied.binaryvault.exceptions.ResourceNotFoundException;
 import com.saied.binaryvault.file.dtos.BlobFileDTO;
 import com.saied.binaryvault.file.dtos.BlobFileDTOMapper;
 import com.saied.binaryvault.s3.S3Buckets;
@@ -45,6 +46,19 @@ public class BlobFileService {
         userService.saveAppUser(user);
         fileRepository.saveAndFlush(fileObject);
         return fileDTOMapper.apply(fileObject);
+    }
+
+    @Transactional
+    public byte[] downloadFile(String username, Long fileId) {
+        AppUser user = userService.findByUsername(username);
+        BlobFile file = fileRepository
+            .findById(fileId)
+            .orElseThrow(
+                () -> new ResourceNotFoundException(
+                    "Could not find file with id %s".formatted(fileId)
+                )
+            );
+        return s3Service.getObject(buckets.getFileStorage(), file.getPath());
     }
 
     public void deleteFileById(Long fileId) {
