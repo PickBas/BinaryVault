@@ -1,4 +1,4 @@
-package com.saied.binaryvault.appuser;
+package com.saied.binaryvault;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

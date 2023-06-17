@@ -1,4 +1,4 @@
-package com.saied.binaryvault.appuser;
+package com.saied.binaryvault;
 
 import java.io.File;
 import java.io.FileInputStream;

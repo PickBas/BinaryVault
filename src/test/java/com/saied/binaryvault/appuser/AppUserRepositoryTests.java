@@ -1,14 +1,12 @@
-package com.saied.binaryvault.appuser.appuser;
+package com.saied.binaryvault.appuser;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.saied.binaryvault.appuser.AbstractTestContainers;
-import com.saied.binaryvault.appuser.AppUser;
-import com.saied.binaryvault.appuser.AppUserRepository;
-import com.saied.binaryvault.appuser.TestConfig;
+import com.saied.binaryvault.AbstractTestContainers;
+import com.saied.binaryvault.TestConfig;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;

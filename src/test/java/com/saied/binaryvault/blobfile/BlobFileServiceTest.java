@@ -1,4 +1,4 @@
-package com.saied.binaryvault.appuser.blobfile;
+package com.saied.binaryvault.blobfile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

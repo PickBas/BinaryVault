@@ -1,15 +1,13 @@
-package com.saied.binaryvault.appuser.it;
+package com.saied.binaryvault.it;
 
 
 import com.github.javafaker.Faker;
 import com.github.javafaker.Name;
-import com.saied.binaryvault.appuser.AbstractTestContainers;
+import com.saied.binaryvault.AbstractTestContainers;
 import com.saied.binaryvault.appuser.AppUserService;
 import com.saied.binaryvault.auth.dtos.AuthenticationRequest;
 import com.saied.binaryvault.auth.dtos.AuthenticationResponse;
 import com.saied.binaryvault.auth.dtos.RegistrationRequest;
-import com.saied.binaryvault.s3.S3Service;
-import java.util.Random;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
