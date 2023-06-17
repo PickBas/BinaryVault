@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS file (
     created_at TIMESTAMP WITHOUT TIME ZONE,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     app_user_id BIGINT,
+    CONSTRAINT file_path_unique UNIQUE (path),
     CONSTRAINT fk_app_user_id
         FOREIGN KEY(app_user_id)
             REFERENCES app_user(id)

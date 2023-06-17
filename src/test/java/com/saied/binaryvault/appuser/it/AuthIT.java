@@ -2,6 +2,7 @@ package com.saied.binaryvault.appuser.it;
 
 import com.github.javafaker.Faker;
 import com.github.javafaker.Name;
+import com.saied.binaryvault.appuser.AbstractTestContainers;
 import com.saied.binaryvault.appuser.dtos.AppUserDTO;
 import com.saied.binaryvault.auth.dtos.AuthenticationRefreshResponse;
 import com.saied.binaryvault.auth.dtos.AuthenticationRequest;
@@ -25,7 +26,7 @@ import reactor.core.publisher.Mono;
     webEnvironment = WebEnvironment.RANDOM_PORT,
     properties = { "spring.jpa.hibernate.ddl-auto=create-drop" }
 )
-public class AuthIT {
+public class AuthIT extends AbstractTestContainers {
 
     @Autowired
     private WebTestClient webTestClient;

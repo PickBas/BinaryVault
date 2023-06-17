@@ -1,6 +1,8 @@
 package com.saied.binaryvault.appuser;
 
 import com.saied.binaryvault.auth.dtos.RegistrationRequest;
+import com.saied.binaryvault.file.BlobFile;
+import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,4 +82,8 @@ public class AppUserService {
         appUserRepo.save(user);
     }
 
+    @Transactional
+    public List<BlobFile> getAllFiles(Long id) {
+        return findById(id).getFiles();
+    }
 }

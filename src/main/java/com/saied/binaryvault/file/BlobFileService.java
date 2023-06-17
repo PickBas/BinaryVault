@@ -8,6 +8,8 @@ import com.saied.binaryvault.file.dtos.BlobFileDTOMapper;
 import com.saied.binaryvault.s3.S3Buckets;
 import com.saied.binaryvault.s3.S3Service;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,8 +43,6 @@ public class BlobFileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        user.addFile(fileObject);
-        userService.saveAppUser(user);
         fileRepository.saveAndFlush(fileObject);
         return fileDTOMapper.apply(fileObject);
     }
@@ -62,5 +62,14 @@ public class BlobFileService {
 
     public void deleteFileById(Long fileId) {
         fileRepository.deleteById(fileId);
+    }
+
+    public List<BlobFileDTO> getAllFilesOfUser(Long userId) {
+        List<BlobFile> files = userService.getAllFiles(userId);
+        List<BlobFileDTO> fileDTOs = new ArrayList<>();
+        files.forEach(
+            file -> fileDTOs.add(fileDTOMapper.apply(file))
+        );
+        return fileDTOs;
     }
 }

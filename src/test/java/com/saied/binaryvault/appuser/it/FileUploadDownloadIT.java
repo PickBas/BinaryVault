@@ -3,11 +3,13 @@ package com.saied.binaryvault.appuser.it;
 
 import com.github.javafaker.Faker;
 import com.github.javafaker.Name;
+import com.saied.binaryvault.appuser.AbstractTestContainers;
 import com.saied.binaryvault.appuser.AppUserService;
 import com.saied.binaryvault.auth.dtos.AuthenticationRequest;
 import com.saied.binaryvault.auth.dtos.AuthenticationResponse;
 import com.saied.binaryvault.auth.dtos.RegistrationRequest;
 import com.saied.binaryvault.s3.S3Service;
+import java.util.Random;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ import reactor.core.publisher.Mono;
     properties = { "spring.jpa.hibernate.ddl-auto=create-drop" }
 )
 @AutoConfigureMockMvc
-public class FileUploadDownloadIT {
+public class FileUploadDownloadIT extends AbstractTestContainers {
 
     @Autowired
     private WebTestClient webTestClient;
@@ -76,7 +78,8 @@ public class FileUploadDownloadIT {
             .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", accessToken))
             .body(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
             .exchange()
-            .expectStatus().isOk();
+            .expectStatus()
+            .isOk();
     }
 
 }
