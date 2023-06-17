@@ -5,9 +5,12 @@ import com.github.javafaker.Faker;
 import com.github.javafaker.Name;
 import com.saied.binaryvault.AbstractTestContainers;
 import com.saied.binaryvault.appuser.AppUserService;
+import com.saied.binaryvault.appuser.dtos.AppUserDTO;
 import com.saied.binaryvault.auth.dtos.AuthenticationRequest;
 import com.saied.binaryvault.auth.dtos.AuthenticationResponse;
 import com.saied.binaryvault.auth.dtos.RegistrationRequest;
+import com.saied.binaryvault.file.dtos.BlobFileDTO;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,17 +45,60 @@ public class FileUploadDownloadIT extends AbstractTestContainers {
 
     @Test
     void testFileUpload() {
+        AppUserDTO userDTO = generateFakeUser();
+        String accessToken = getAccessToken(userDTO, "Test123!");
+        MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
+        multipartBodyBuilder
+            .part("file", new ClassPathResource("testfile.txt"))
+            .contentType(MediaType.MULTIPART_FORM_DATA);
+        EntityExchangeResult<BlobFileDTO> resultFileUpload = webTestClient.post()
+            .uri(FILE_PATH + "/upload-file")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", accessToken))
+            .body(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody(new ParameterizedTypeReference<BlobFileDTO>() {})
+            .returnResult();
+        BlobFileDTO fileDTO = resultFileUpload.getResponseBody();
+        Assertions.assertNotNull(fileDTO);
+        Long userId = userService.findByUsername(userDTO.username()).getId();
+        Assertions.assertTrue(fileDTO.path().contains("files/%s".formatted(userId)));
+
+    }
+
+    private AppUserDTO generateFakeUser() {
         Faker faker = new Faker();
         Name fakeName = faker.name();
         String username = fakeName.username();
         String firstName = fakeName.firstName();
         String lastName = fakeName.lastName();
         String email = firstName + "@gmail.com";
-        String password = "Test123!";
-        userService.createAppUser(
-            new RegistrationRequest(username, email, firstName, lastName, password)
+        return new AppUserDTO(
+            0L,
+            username,
+            email,
+            firstName,
+            lastName,
+            List.of("ROLE_USER")
         );
-        AuthenticationRequest authRequest = new AuthenticationRequest(username, password);
+    }
+
+    private String getAccessToken(
+        AppUserDTO userDTO,
+        String password
+    ) {
+        userService.createAppUser(
+            new RegistrationRequest(
+                userDTO.username(),
+                userDTO.email(),
+                userDTO.firstName(),
+                userDTO.lastName(),
+                password
+            )
+        );
+        AuthenticationRequest authRequest = new AuthenticationRequest(userDTO.username(), password);
         EntityExchangeResult<AuthenticationResponse> resultLogin = webTestClient.post()
             .uri(AUTH_PATH + "/login")
             .accept(MediaType.APPLICATION_JSON)
@@ -65,19 +111,7 @@ public class FileUploadDownloadIT extends AbstractTestContainers {
             .returnResult();
         AuthenticationResponse authResponse = resultLogin.getResponseBody();
         Assertions.assertNotNull(authResponse);
-        String accessToken = authResponse.accessToken();
-        MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
-        multipartBodyBuilder
-            .part("file", new ClassPathResource("testfile.txt"))
-            .contentType(MediaType.MULTIPART_FORM_DATA);
-        webTestClient.post()
-            .uri(FILE_PATH + "/upload-file")
-            .accept(MediaType.APPLICATION_JSON)
-            .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", accessToken))
-            .body(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
-            .exchange()
-            .expectStatus()
-            .isOk();
+        return authResponse.accessToken();
     }
 
 }
