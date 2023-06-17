@@ -45,7 +45,7 @@ public class FileUploadDownloadIT extends AbstractTestContainers {
 
     @Test
     void testFileUpload() {
-        AppUserDTO userDTO = generateFakeUser();
+        AppUserDTO userDTO = generateFakeUserDTO();
         String accessToken = getAccessToken(userDTO, "Test123!");
         MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
         multipartBodyBuilder
@@ -68,7 +68,7 @@ public class FileUploadDownloadIT extends AbstractTestContainers {
 
     }
 
-    private AppUserDTO generateFakeUser() {
+    private AppUserDTO generateFakeUserDTO() {
         Faker faker = new Faker();
         Name fakeName = faker.name();
         String username = fakeName.username();
