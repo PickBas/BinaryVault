@@ -1,4 +1,4 @@
-package com.saied.binaryvault.appuser;
+package com.saied.binaryvault;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

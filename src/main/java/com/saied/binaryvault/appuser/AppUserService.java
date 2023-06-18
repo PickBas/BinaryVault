@@ -1,6 +1,8 @@
 package com.saied.binaryvault.appuser;
 
 import com.saied.binaryvault.auth.dtos.RegistrationRequest;
+import com.saied.binaryvault.file.BlobFile;
+import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,8 +67,7 @@ public class AppUserService {
                 "User with provided email %s already exists".formatted(appUserRequest.getEmail())
             );
         }
-        AppUser user = AppUser
-            .builder()
+        AppUser user = AppUser.builder()
             .username(appUserRequest.getUsername())
             .email(appUserRequest.getEmail())
             .firstName(appUserRequest.getFirstName())
@@ -74,8 +75,15 @@ public class AppUserService {
             .password(encoder.encode(appUserRequest.getPassword()))
             .build();
         appUserRepo.saveAndFlush(user);
-        log.info("Created AppUser with id: {}", user.getId());
         return user;
     }
 
+    public void saveAppUser(AppUser user) {
+        appUserRepo.save(user);
+    }
+
+    @Transactional
+    public List<BlobFile> getAllFiles(Long id) {
+        return findById(id).getFiles();
+    }
 }

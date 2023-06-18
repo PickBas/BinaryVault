@@ -1,4 +1,4 @@
-package com.saied.binaryvault.appuser;
+package com.saied.binaryvault;
 
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;

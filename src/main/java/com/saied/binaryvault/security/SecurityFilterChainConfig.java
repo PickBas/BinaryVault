@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -35,7 +36,8 @@ public class SecurityFilterChainConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
          http
-             .csrf().disable()
+             .httpBasic(AbstractHttpConfigurer::disable)
+             .csrf(AbstractHttpConfigurer::disable)
              .cors(Customizer.withDefaults())
              .authorizeHttpRequests(
                 auth -> auth
@@ -51,13 +53,14 @@ public class SecurityFilterChainConfig {
              .sessionManagement(
                  session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
              )
-             .authenticationProvider(authenticationProvider)
              .addFilterBefore(
                  jwtAuthenticationFilter,
                  UsernamePasswordAuthenticationFilter.class
              )
-             .exceptionHandling()
-             .authenticationEntryPoint(authenticationEntryPoint);
+             .authenticationProvider(authenticationProvider)
+             .exceptionHandling(
+                 exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint)
+             );
          return http.build();
     }
 

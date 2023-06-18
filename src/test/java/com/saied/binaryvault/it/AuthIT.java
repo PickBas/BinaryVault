@@ -1,7 +1,8 @@
-package com.saied.binaryvault.appuser.it;
+package com.saied.binaryvault.it;
 
 import com.github.javafaker.Faker;
 import com.github.javafaker.Name;
+import com.saied.binaryvault.AbstractTestContainers;
 import com.saied.binaryvault.appuser.dtos.AppUserDTO;
 import com.saied.binaryvault.auth.dtos.AuthenticationRefreshResponse;
 import com.saied.binaryvault.auth.dtos.AuthenticationRequest;
@@ -17,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono;
     webEnvironment = WebEnvironment.RANDOM_PORT,
     properties = { "spring.jpa.hibernate.ddl-auto=create-drop" }
 )
-public class AuthIT {
+public class AuthIT extends AbstractTestContainers {
 
     @Autowired
     private WebTestClient webTestClient;

@@ -1,16 +1,20 @@
 package com.saied.binaryvault.appuser;
 
+import com.saied.binaryvault.file.BlobFile;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -20,6 +24,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,6 +45,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class AppUser implements UserDetails {
 
     @Id
@@ -50,7 +58,6 @@ public class AppUser implements UserDetails {
         strategy = SEQUENCE,
         generator = "app_user_id_seq"
     )
-    @EqualsAndHashCode.Exclude
     private Long id;
 
     @Column(
@@ -76,8 +83,41 @@ public class AppUser implements UserDetails {
         nullable = false,
         columnDefinition = "TEXT"
     )
-    @JsonIgnore
     private String password;
+
+    @CreationTimestamp
+    @Column(
+        name = "created_at",
+        nullable = false,
+        columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
+    )
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(
+        name = "updated_at",
+        nullable = false,
+        columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
+    )
+    private LocalDateTime updatedAt;
+
+    @OneToMany(
+        cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.REMOVE
+        },
+        mappedBy = "owner",
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
+    private List<BlobFile> files = new ArrayList<>();
+
+    public void addFile(BlobFile file) {
+        if (!files.contains(file)) {
+            files.add(file);
+        }
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
