@@ -50,7 +50,8 @@ public class SecurityFilterChainConfig {
                     .requestMatchers(
                         HttpMethod.GET,
                         "/api/v1/swagger-ui/**",
-                        "/v3/api-docs/**"
+                        "/v3/api-docs/**",
+                        "/"
                     )
                     .permitAll()
                     .anyRequest()
