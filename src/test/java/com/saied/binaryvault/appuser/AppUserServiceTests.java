@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.saied.binaryvault.appuser.dtos.AppUserDTOMapper;
 import com.saied.binaryvault.auth.dtos.RegistrationRequest;
 import java.util.Optional;
 
@@ -35,7 +36,7 @@ class AppUserServiceTests {
 
     @BeforeEach
     public void setUp() {
-        appUserService = new AppUserService(appUserRepo, passwordEncoder);
+        appUserService = new AppUserService(appUserRepo, new AppUserDTOMapper(), passwordEncoder);
     }
 
     @Test

@@ -27,3 +27,6 @@ aws:
   s3:
     buckets:
       fileStorage: binary-vault-blob-bucket
+springdoc:
+  swagger-ui:
+    path: /api/v1/swagger-ui

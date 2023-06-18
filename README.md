@@ -3,3 +3,7 @@
 [![mvn](https://github.com/PickBas/BinaryVault/actions/workflows/mvn.yml/badge.svg)](https://github.com/PickBas/BinaryVault/actions/workflows/mvn.yml)
 
 Cloud blob storage web service developed with Spring Boot 3.
+
+API documentation is available here:
+
+    /api/v1/swagger-ui

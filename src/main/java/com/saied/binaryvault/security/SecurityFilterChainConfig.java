@@ -47,6 +47,13 @@ public class SecurityFilterChainConfig {
                         "/api/v1/auth/register"
                     )
                     .permitAll()
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/v1/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/"
+                    )
+                    .permitAll()
                     .anyRequest()
                     .authenticated()
             )
