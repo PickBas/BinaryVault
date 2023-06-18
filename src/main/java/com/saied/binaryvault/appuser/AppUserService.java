@@ -1,5 +1,7 @@
 package com.saied.binaryvault.appuser;
 
+import com.saied.binaryvault.appuser.dtos.AppUserDTO;
+import com.saied.binaryvault.appuser.dtos.AppUserDTOMapper;
 import com.saied.binaryvault.auth.dtos.RegistrationRequest;
 import com.saied.binaryvault.file.BlobFile;
 import java.util.List;
@@ -19,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AppUserService {
 
     private final AppUserRepository appUserRepo;
+    private final AppUserDTOMapper appUserDTOMapper;
     private final PasswordEncoder encoder;
 
     @Transactional(readOnly = true)
@@ -52,6 +55,11 @@ public class AppUserService {
                     "Could not find user with email: %s".formatted(email)
                 )
             );
+    }
+
+    @Transactional
+    public AppUserDTO findAndReturnDTO(Long id) {
+        return appUserDTOMapper.apply(findById(id));
     }
 
     public AppUser createAppUser(RegistrationRequest appUserRequest) {
