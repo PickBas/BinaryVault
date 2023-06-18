@@ -10,6 +10,8 @@ import com.saied.binaryvault.auth.dtos.AuthenticationRequest;
 import com.saied.binaryvault.auth.dtos.AuthenticationResponse;
 import com.saied.binaryvault.auth.dtos.RegistrationRequest;
 import com.saied.binaryvault.file.dtos.BlobFileDTO;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -65,7 +67,56 @@ public class FileUploadDownloadIT extends AbstractTestContainers {
         Assertions.assertNotNull(fileDTO);
         Long userId = userService.findByUsername(userDTO.username()).getId();
         Assertions.assertTrue(fileDTO.path().contains("files/%s".formatted(userId)));
+    }
 
+    @Test
+    void testFileDownload() {
+        AppUserDTO userDTO = generateFakeUserDTO();
+        String accessToken = getAccessToken(userDTO, "Test123!");
+        Long userId = userService.findByUsername(userDTO.username()).getId();
+        MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
+        multipartBodyBuilder
+            .part("file", new ClassPathResource("testfile.txt"))
+            .contentType(MediaType.MULTIPART_FORM_DATA);
+        webTestClient.post()
+            .uri(FILE_PATH + "/upload-file")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", accessToken))
+            .body(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
+            .exchange()
+            .expectStatus()
+            .isOk();
+        EntityExchangeResult<List<BlobFileDTO>> resultListOfUserFiles = webTestClient.get()
+            .uri(FILE_PATH + "/user-files/%s".formatted(userId))
+            .accept(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", accessToken))
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody(new ParameterizedTypeReference<List<BlobFileDTO>>() {})
+            .returnResult();
+        List<BlobFileDTO> fileDTOs = resultListOfUserFiles.getResponseBody();
+        Assertions.assertNotNull(fileDTOs);
+        Assertions.assertEquals(1, fileDTOs.size());
+        Long fileId = fileDTOs.get(0).id();
+        EntityExchangeResult<byte[]> resultDownloadFile = webTestClient.get()
+            .uri(FILE_PATH + "/download-file/%s".formatted(fileId))
+            .accept(MediaType.MULTIPART_FORM_DATA)
+            .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", accessToken))
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody(new ParameterizedTypeReference<byte[]>() {})
+            .returnResult();
+        byte[] downloadedFile = resultDownloadFile.getResponseBody();
+        byte[] originFile;
+        try {
+            originFile = new ClassPathResource("testfile.txt").getContentAsByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertNotNull(downloadedFile);
+        Assertions.assertArrayEquals(downloadedFile, originFile);
     }
 
     private AppUserDTO generateFakeUserDTO() {
