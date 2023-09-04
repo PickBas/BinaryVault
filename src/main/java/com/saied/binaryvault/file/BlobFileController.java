@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/v1/file")
@@ -32,7 +34,7 @@ public class BlobFileController {
     @ApiResponses(
         value = {
             @ApiResponse(
-                responseCode = "200",
+                responseCode = "201",
                 description = "File was successfully uploaded.",
                 content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
             ),
@@ -45,7 +47,13 @@ public class BlobFileController {
     )
     public ResponseEntity<BlobFileDTO> uploadFile(Principal principal, MultipartFile file) {
         BlobFileDTO fileDTO = fileService.uploadFile(principal.getName(), file);
-        return ResponseEntity.ok().body(fileDTO);
+        URI uri = URI.create(
+            ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/v1/file/upload-file")
+                .toUriString()
+        );
+        return ResponseEntity.created(uri).body(fileDTO);
     }
 
     @GetMapping(
