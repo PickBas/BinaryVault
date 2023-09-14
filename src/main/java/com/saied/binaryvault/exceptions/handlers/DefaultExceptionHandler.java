@@ -1,5 +1,6 @@
 package com.saied.binaryvault.exceptions.handlers;
 
+import com.saied.binaryvault.exceptions.ResourceAlreadyExistsException;
 import com.saied.binaryvault.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.ZonedDateTime;
@@ -16,6 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @ControllerAdvice
 public class DefaultExceptionHandler {
@@ -23,6 +25,24 @@ public class DefaultExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> handleResourceNotFoundException(
         ResourceNotFoundException e,
+        HttpServletRequest request
+    ) {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(
+                new HandlerResponseTemplate(
+                    ZonedDateTime.now(),
+                    HttpStatus.NOT_FOUND.value(),
+                    HttpStatus.NOT_FOUND.getReasonPhrase(),
+                    e.getMessage(),
+                    request.getRequestURI()
+                )
+            );
+    }
+
+    @ExceptionHandler(value = ResourceAlreadyExistsException.class)
+    public ResponseEntity<?> handleResourceAlreadyExistsException(
+        ResourceAlreadyExistsException e,
         HttpServletRequest request
     ) {
         return ResponseEntity
@@ -86,7 +106,7 @@ public class DefaultExceptionHandler {
                     ZonedDateTime.now(),
                     HttpStatus.FORBIDDEN.value(),
                     HttpStatus.FORBIDDEN.getReasonPhrase(),
-                    "Unauthorized action. Please check your token, Http method and uri.",
+                    e.getMessage(),
                     request.getRequestURI()
                 )
             );
@@ -111,6 +131,24 @@ public class DefaultExceptionHandler {
                     HttpStatus.BAD_REQUEST.value(),
                     HttpStatus.BAD_REQUEST.getReasonPhrase(),
                     payload,
+                    request.getRequestURI()
+                )
+            );
+    }
+
+    @ExceptionHandler(value = S3Exception.class)
+    public ResponseEntity<?> handleS3Exception(
+        S3Exception e,
+        HttpServletRequest request
+    ) {
+        return ResponseEntity
+            .badRequest()
+            .body(
+                new HandlerResponseTemplate(
+                    ZonedDateTime.now(),
+                    HttpStatus.BAD_REQUEST.value(),
+                    HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                    e.getMessage(),
                     request.getRequestURI()
                 )
             );
