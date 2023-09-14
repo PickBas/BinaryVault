@@ -60,7 +60,7 @@ public class FileUploadDownloadIT extends AbstractTestContainers {
             .body(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
             .exchange()
             .expectStatus()
-            .isOk()
+            .isCreated()
             .expectBody(new ParameterizedTypeReference<BlobFileDTO>() {})
             .returnResult();
         BlobFileDTO fileDTO = resultFileUpload.getResponseBody();
@@ -85,7 +85,7 @@ public class FileUploadDownloadIT extends AbstractTestContainers {
             .body(BodyInserters.fromMultipartData(multipartBodyBuilder.build()))
             .exchange()
             .expectStatus()
-            .isOk();
+            .isCreated();
         EntityExchangeResult<List<BlobFileDTO>> resultListOfUserFiles = webTestClient.get()
             .uri(FILE_PATH + "/user-files/%s".formatted(userId))
             .accept(MediaType.APPLICATION_JSON)
