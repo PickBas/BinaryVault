@@ -17,6 +17,7 @@
         <java.version>17</java.version>
         <jsonwebtoken.version>0.11.5</jsonwebtoken.version>
         <testcontainers.version>1.18.3</testcontainers.version>
+        <jib.skip>true</jib.skip>
     </properties>
     <dependencies>
         <dependency>
@@ -153,6 +154,7 @@
                     <to>
                         <image>docker.io/pickbas/binaryvault:latest</image>
                     </to>
+                    <skip>${jib.skip}</skip>
                 </configuration>
                 <executions>
                     <execution>
