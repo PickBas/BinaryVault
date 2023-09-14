@@ -9,6 +9,9 @@ services:
       DB_PASSWORD: password
       DB_URL: postgresql://postgres:5432/binaryvault
       SPRING_PROFILES_ACTIVE: docker
+      AWS_SHARED_CREDENTIALS_FILE: /app/.aws/credentials
+    volumes:
+      - $HOME/.aws/credentials:/app/.aws/credentials
     restart: always
     depends_on:
       - postgres
