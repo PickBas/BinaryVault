@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: BinaryVault
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: jdbc:${DB_URL}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+server:
+  port: 8080
+  error:
+    include-message: always
+cors:
+  allowed-origins: "*"
+  allowed-methods: "*"
+  allowed-headers: "*"
+  exposed-headers: "*"
+aws:
+  region: eu-west-3
+  s3:
+    buckets:
+      fileStorage: binary-vault-blob-bucket
+springdoc:
+  swagger-ui:
+    path: /api/v1/swagger-ui

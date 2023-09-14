@@ -17,6 +17,7 @@
         <java.version>17</java.version>
         <jsonwebtoken.version>0.11.5</jsonwebtoken.version>
         <testcontainers.version>1.18.3</testcontainers.version>
+        <jib.skip>true</jib.skip>
     </properties>
     <dependencies>
         <dependency>
@@ -131,6 +132,38 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <from>
+                        <image>eclipse-temurin:17</image>
+                        <platforms>
+                            <platform>
+                                <architecture>arm64</architecture>
+                                <os>linux</os>
+                            </platform>
+                            <platform>
+                                <architecture>amd64</architecture>
+                                <os>linux</os>
+                            </platform>
+                        </platforms>
+                    </from>
+                    <to>
+                        <image>docker.io/pickbas/binaryvault:latest</image>
+                    </to>
+                    <skip>${jib.skip}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
